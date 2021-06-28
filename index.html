@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<div id="videoContainer" align="center">
+
+
+</div>
+
+
+
+
+<button onclick="handler.startScreenCapture()">click</button>
+<button onclick="getALlVideos()">get all</button>
+
+
+
+<script src="./script.js"></script>
+<script>
+    const handler = new handleScreenCaptureSteamWithIndexedDB('video')
+
+   function getALlVideos() {
+       document.getElementById('videoContainer').innerHTML = ''
+        const videos = handler.allBlobs
+       videos.forEach(v => {
+           const url = window.URL.createObjectURL(v.blob)
+           document.getElementById('videoContainer').innerHTML += `
+            <video src="${url}"  height="150" controls width="250"></video>
+            <button  class="btn" data-handler='${JSON.stringify(v.handler)}'>Delete</button>
+           `
+       })
+        const deleteBtn = document.getElementsByClassName('btn')
+       Array.prototype.forEach.call(deleteBtn, btn => {
+           btn.onclick = e => {
+
+               const p = JSON.parse(e.target.dataset.handler)
+
+               handler.deleteChunksById(p, (res) => {
+                   alert(res)
+                   e.target.previousElementSibling.remove()
+                   e.target.remove()
+               })
+           }
+       })
+   }
+
+</script>
+</body>
+</html>
